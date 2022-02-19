@@ -3,19 +3,21 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const admin = require('firebase-admin');
+
 app.use(cors({origin: true}));
+
 admin.initializeApp();
 const db = admin.firestore();
 // user function
 
 app.post('/', async (req, res) => {
   const user = req.body;
-  await db().collection('currentUser').add(user);
+  await db.collection('currentUser').add(user);
   res.status(201).send();
 });
 
 app.get('/:id', async (req, res) => {
-  const snapshot = await db()
+  const snapshot = await db
       .collection('currentUser').doc(req.params.id).get();
   const userId = snapshot.id;
   const userData = snapshot.data();
@@ -25,7 +27,7 @@ app.get('/:id', async (req, res) => {
 
 // comments functions
 app.get('/', async (req, res) => {
-  const snapshot = await db().collection('comments').get();
+  const snapshot = await db.collection('comments').get();
 
   const coms = [];
   snapshot.forEach((doc) => {
@@ -49,21 +51,21 @@ app.get('/comment/:id', async (req, res) => {
 
 app.post('/comment', async (req, res) => {
   const comment = req.body;
-  await db().collection('comments').add(comment);
+  await db.collection('comments').add(comment);
 
   res.status(200).send();
 });
 
 app.put('/comment/:id', async (req, res) => {
   const editComment = req.body;
-  await db()
+  await db
       .collection('comments').doc(req.params.id).update(editComment);
 
   res.status(200).send();
 });
 
 app.delete('/comment/:id', async (req, res) => {
-  await db()
+  await db
       .collection('comments').doc(req.params.id).delete();
 
   res.status(200).send();
